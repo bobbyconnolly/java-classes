@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Understanding Java Classes: A Visual Guide</title>
+    <style>
+      :root {
+        /* Colors */
+        --fields-color: rgba(66, 135, 245, 0.1);
+        --fields-border: rgba(66, 135, 245, 0.3);
+        --constructors-color: rgba(66, 245, 135, 0.1);
+        --constructors-border: rgba(66, 245, 135, 0.3);
+        --methods-color: rgba(245, 66, 135, 0.1);
+        --methods-border: rgba(245, 66, 135, 0.3);
+        --text-primary: #2c3e50;
+        --text-secondary: #666;
+        --bg-code: #f8f9fa;
+        --blue: #3498db;
+        --green: #2ecc71;
+        --shadow: rgba(0, 0, 0, 0.1);
+      }
+
+      /* Reset and Base Styles */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        padding: 0.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #f5f5f5;
+      }
+
+      /* Typography */
+      h1,
+      h2 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+      }
+
+      .code {
+        font-family: "Consolas", monospace;
+        line-height: 1.5;
+        font-size: 0.9rem;
+        background: var(--bg-code);
+        padding: 1rem;
+        border-radius: 4px;
+      }
+
+      /* Syntax Highlighting */
+      .keyword {
+        color: #c792ea;
+      }
+      .type {
+        color: #82aaff;
+      }
+      .string {
+        color: #c3e88d;
+      }
+      .comment {
+        color: var(--text-secondary);
+      }
+      .annotation {
+        color: #e67e22;
+      }
+
+      /* Layout Components */
+      .section {
+        background: white;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px var(--shadow);
+      }
+
+      /* Cards and Boxes */
+      .class-card,
+      .code-card,
+      .access-card,
+      .example-box,
+      .usage-box {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px var(--shadow);
+        margin: 1.5rem 0;
+      }
+
+      .class-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #4287f5, #42f587, #f54266);
+      }
+
+      /* Zones */
+      .zone {
+        position: relative;
+        margin: 1rem 0;
+        padding: 1rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+      }
+
+      .zone:hover {
+        transform: translateX(5px);
+      }
+
+      .zone-label {
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.2rem 0.5rem;
+        border-radius: 0 4px 0 4px;
+      }
+
+      .fields-zone {
+        background: var(--fields-color);
+        border: 1px solid var(--fields-border);
+      }
+
+      .constructors-zone {
+        background: var(--constructors-color);
+        border: 1px solid var(--constructors-border);
+      }
+
+      .methods-zone {
+        background: var(--methods-color);
+        border: 1px solid var(--methods-border);
+      }
+
+      /* Access Modifiers */
+      .modifier-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .modifier-box {
+        flex: 1;
+        min-width: 280px;
+        padding: 1rem;
+        border-radius: 6px;
+        position: relative;
+        transition: transform 0.2s ease;
+      }
+
+      .modifier-box:hover {
+        transform: translateY(-3px);
+      }
+
+      .modifier-box .label {
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      /* Inheritance Chain */
+      .inheritance-chain {
+        margin: 2rem 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .abstract-class {
+        border: 2px dashed var(--blue);
+      }
+
+      .concrete-class {
+        border: 2px solid var(--green);
+      }
+
+      .abstract-class,
+      .concrete-class {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px var(--shadow);
+        width: 100%;
+        max-width: 500px;
+      }
+
+      .inheritance-arrows {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .arrow-down {
+        color: var(--blue);
+        font-size: 1.5rem;
+      }
+
+      .arrow-label {
+        background: var(--bg-code);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-family: "Consolas", monospace;
+      }
+
+      /* Grid Layouts */
+      .code-examples {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      /* Responsive Design */
+      @media (min-width: 768px) {
+        body {
+          padding: 2rem;
+        }
+        .section {
+          padding: 2rem;
+          margin: 2rem 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .code-examples {
+          grid-template-columns: 1fr;
+        }
+        .inheritance-chain {
+          padding: 0 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Understanding Java Classes: A Visual Guide</h1>
+
+    <div class="section">
+      <h2>The Anatomy of a Java Class</h2>
+      <p>A Java class is like a blueprint that organizes related code into distinct zones:</p>
+
+      <div class="class-card">
+        <div class="code"><span class="keyword">public class</span> <span class="type">Student</span> {</div>
+
+        <div class="zone fields-zone">
+          <div class="zone-label">Fields</div>
+          <div class="code">
+            <span class="keyword">private</span> <span class="type">String</span> name;<br />
+            <span class="keyword">private</span> <span class="type">int</span> id;<br />
+            <span class="keyword">private</span> <span class="type">double</span> gpa;
+          </div>
+        </div>
+
+        <div class="zone constructors-zone">
+          <div class="zone-label">Constructors</div>
+          <div class="code">
+            <span class="keyword">public</span> <span class="type">Student</span>(<span class="type">String</span> name,
+            <span class="type">int</span> id) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.id = id;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.gpa = 0.0;<br />
+            }
+          </div>
+        </div>
+
+        <div class="zone methods-zone">
+          <div class="zone-label">Methods</div>
+          <div class="code">
+            <span class="keyword">public</span> <span class="type">String</span> getName() {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> name;<br />
+            }<br /><br />
+            <span class="keyword">public</span> <span class="type">void</span> updateGPA(<span class="type"
+              >double</span
+            >
+            newGPA) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.gpa = newGPA;<br />
+            }
+          </div>
+        </div>
+
+        <div class="code">}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Access Modifiers: Who Can See What?</h2>
+
+      <div class="access-card">
+        <div class="modifier-row">
+          <div class="modifier-box public">
+            <div class="label">public</div>
+            <div class="code"><span class="keyword">public</span> <span class="type">String</span> name;</div>
+            <div class="visibility-indicator">👀 Everyone can see this!</div>
+          </div>
+
+          <div class="modifier-box private">
+            <div class="label">private</div>
+            <div class="code"><span class="keyword">private</span> <span class="type">String</span> ssn;</div>
+            <div class="visibility-indicator">🔒 Only this class can see this</div>
+          </div>
+        </div>
+
+        <div class="modifier-row">
+          <div class="modifier-box protected">
+            <div class="label">protected</div>
+            <div class="code"><span class="keyword">protected</span> <span class="type">double</span> salary;</div>
+            <div class="visibility-indicator">👪 Only family (subclasses) can see this</div>
+          </div>
+
+          <div class="modifier-box default">
+            <div class="label">default (package-private)</div>
+            <div class="code"><span class="type">String</span> department;</div>
+            <div class="visibility-indicator">🏠 Only roommates (same package) can see this</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Encapsulation: Protecting Our Fields</h2>
+
+        <div class="class-card">
+          <div class="code"><span class="keyword">public class</span> <span class="type">BankAccount</span> {</div>
+
+          <div class="zone fields-zone">
+            <div class="zone-label">Private Fields</div>
+            <div class="code">
+              <span class="keyword">private</span> <span class="type">double</span> balance;
+              <span class="comment">// 🔒 Protected!</span>
+            </div>
+          </div>
+
+          <div class="zone methods-zone">
+            <div class="zone-label">Public Methods</div>
+            <div class="code">
+              <span class="keyword">public</span> <span class="type">double</span> getBalance() {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> balance;<br />
+              }<br /><br />
+              <span class="keyword">public</span> <span class="type">void</span> deposit(<span class="type"
+                >double</span
+              >
+              amount) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (amount > 0) {
+              <span class="comment">// 🛡️ Validation!</span><br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;balance += amount;<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              }
+            </div>
+          </div>
+
+          <div class="code">}</div>
+        </div>
+
+        <div
+          class="highlight"
+          style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 1rem; margin: 1rem 0"
+        >
+          Think of encapsulation like a bank vault:<br />
+          1. Money (fields) is locked away 🔒<br />
+          2. Transactions (methods) are carefully controlled ✅<br />
+          3. Can't grab money directly, must go through proper channels 🏦
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Static vs Instance Members</h2>
+
+      <div class="code-card">
+        <div class="code">
+          <span class="keyword">public class</span> <span class="type">BankAccount</span> {<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Static (shared by ALL bank accounts)</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private static</span>
+          <span class="type">double</span> interestRate = 2.5;<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private static</span>
+          <span class="type">int</span> totalAccounts = 0;<br /><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Instance (unique to EACH account)</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span>
+          <span class="type">String</span> accountHolder;<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> <span class="type">double</span> balance;<br />
+          }
+        </div>
+      </div>
+
+      <div class="highlight" style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 1rem; margin: 1rem 0">
+        <strong>Key Difference:</strong> Static members belong to the class itself - no
+        <span class="keyword">new</span> needed!
+      </div>
+
+      <div class="code-examples">
+        <div class="example-box">
+          <div class="label">✅ Using Static Members (No objects needed)</div>
+          <div class="code">
+            <span class="comment">// Get current interest rate directly</span><br />
+            <span class="type">double</span> rate = <span class="type">BankAccount</span>.interestRate;<br />
+            <br />
+            <span class="comment">// Other common examples:</span><br />
+            <span class="type">Math</span>.random();<br />
+            <span class="type">Arrays</span>.sort(numbers);
+          </div>
+        </div>
+
+        <div class="example-box">
+          <div class="label">🆚 Using Instance Members (Must create object)</div>
+          <div class="code">
+            <span class="comment">// Need an actual account first!</span><br />
+            <span class="type">BankAccount</span> account = <span class="keyword">new</span>
+            <span class="type">BankAccount</span>();<br />
+            account.balance = 1000.00;
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Inheritance and Method Overriding</h2>
+
+      <div class="inheritance-chain">
+        <div class="abstract-class">
+          <div class="class-title"><span class="keyword">abstract class</span> <span class="type">Pet</span></div>
+          <div class="code">
+            <span class="keyword">abstract void</span> makeSound();<br />
+            <span class="keyword">public void</span> sleep() {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Zzz...");<br />
+            }
+          </div>
+        </div>
+
+        <div class="inheritance-arrows">
+          <div class="arrow-down">▼</div>
+          <div class="arrow-label">extends</div>
+        </div>
+
+        <div class="concrete-class">
+          <div class="class-title">
+            <span class="keyword">class</span> <span class="type">Fish</span> <span class="keyword">extends</span>
+            <span class="type">Pet</span>
+          </div>
+          <div class="code">
+            <span class="annotation">@Override</span><br />
+            <span class="keyword">void</span> makeSound() {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Blub blub");<br />
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight" style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 1rem; margin: 1rem 0">
+        <strong>Key Points:</strong><br />
+        • Abstract methods must be implemented by child classes 🔨<br />
+        • @Override helps catch errors and shows intent 🎯<br />
+        • Child classes can still use parent's methods ⬆️
+      </div>
+
+      <div class="example-usage">
+        <div class="usage-box">
+          <div class="label">Working with Abstract Classes</div>
+          <div class="code">
+            <span class="comment">// Can't create abstract class directly</span><br />
+            <span class="type">Pet</span> pet = <span class="keyword">new</span> <span class="type">Pet</span>();
+            <span class="comment">// ❌ Won't compile!</span><br />
+            <br />
+            <span class="comment">// But can use child class</span><br />
+            <span class="type">Pet</span> myFish = <span class="keyword">new</span> <span class="type">Fish</span>();
+            <span class="comment">// ✅ Works fine!</span><br />
+            myFish.makeSound(); <span class="comment">// "Blub blub"</span><br />
+            myFish.sleep(); <span class="comment">// "Zzz..." (from Pet)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
