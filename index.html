@@ -292,6 +292,21 @@
 
         <div class="code">}</div>
       </div>
+
+      <div class="highlight" style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 1rem; margin: 1rem 0">
+        <strong>Understanding 'this':</strong><br />
+        When we write <code>this.name = name</code> in a constructor or method, we're saying:<br />
+        • <code>this.name</code> refers to the field in <em>this</em> object<br />
+        • <code>name</code> by itself refers to the parameter<br /><br />
+        <div class="code">
+          <span class="keyword">public</span> <span class="type">Student</span>(String name) {<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// this.name is the field</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// name is the parameter</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;this.name = name;<br />
+          }
+        </div>
+        Without <code>this</code>, Java wouldn't know which 'name' you mean!
+      </div>
     </div>
 
     <div class="section">
